@@ -89,12 +89,15 @@ class ConfigurationManager
 
                                 if (Test-Path -Path $expectedExtFolder) {
                                     $expectedExtFile = (Get-ChildItem $expectedExtFolder -Name -Recurse -Include $extensionSVTClassFileName) | Select-Object -First 1
-                                }
-
-				if ($expectedExtFile)
-				{
+				    if ($expectedExtFile)
+				    {
 				        $extensionFilePath = Join-Path $expectedExtFolder $expectedExtFile
-				}
+				    }
+                                    else 
+                                    {
+					[EventBase]::PublishGenericCustomMessage(("Could not find extension folder for [$svtClassName] in [$expectedExtFolder] in org-policy-debug mode."), [MessageType]::Error);
+                                    }
+                                }
 				else 
 				{	
 					[EventBase]::PublishGenericCustomMessage(("Could not find extension (.ext.ps1) file for [$svtClassName] in folder [$expectedExtFolder] in org-policy-debug mode."), [MessageType]::Error);
