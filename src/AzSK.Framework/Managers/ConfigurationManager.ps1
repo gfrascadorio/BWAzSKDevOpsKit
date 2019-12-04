@@ -86,11 +86,14 @@ class ConfigurationManager
 			{
 				Write-Warning "########## Looking for .ext.ps1 file locally..... ##########"
 				$expectedExtFolder = Join-Path ([ConfigurationManager]::GetAzSKSettings().OnlinePolicyStoreUrl) 'Config'
-				$expectedExtFile = Join-Path $expectedExtFolder $extensionSVTClassFileName
 
-				if (Test-Path $expectedExtFile)
+                                if (Test-Path -Path $expectedExtFolder) {
+                                    $expectedExtFile = (Get-ChildItem $expectedExtFolder -Name -Recurse -Include $extensionSVTClassFileName) | Select-Object -First 1
+                                }
+
+				if ($expectedExtFile)
 				{
-					$extensionFilePath = $expectedExtFile
+				        $extensionFilePath = Join-Path $expectedExtFolder $expectedExtFile
 				}
 				else 
 				{	

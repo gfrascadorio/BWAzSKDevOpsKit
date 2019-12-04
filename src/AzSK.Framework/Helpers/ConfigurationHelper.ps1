@@ -99,31 +99,27 @@ class ConfigurationHelper {
 					{
 						if([String]::IsNullOrWhiteSpace([ConfigurationHelper]::ConfigVersion) -and -not [ConfigurationHelper]::LocalPolicyEnabled)
 						{
-							try
-							{
-								$Version = [System.Version] ($global:ExecutionContext.SessionState.Module.Version);
-								$serverFileContent = [ConfigurationHelper]::InvokeControlsAPI($onlineStoreUri, $Version, $policyFileName, $enableAADAuthForOnlinePolicyStore);
-								[ConfigurationHelper]::ConfigVersion = $Version;
-							}
-							catch
-							{
-								try{
-									$Version = ([ConfigurationHelper]::LoadOfflineConfigFile("AzSK.json")).ConfigSchemaBaseVersion;
-									$serverFileContent = [ConfigurationHelper]::InvokeControlsAPI($onlineStoreUri, $Version, $policyFileName, $enableAADAuthForOnlinePolicyStore);
-									[ConfigurationHelper]::ConfigVersion = $Version;
-								}
-								catch{
-									if(Test-Path $onlineStoreUri)
-									{	
-										[EventBase]::PublishGenericCustomMessage("Running Org-Policy from local policy store location: [$onlineStoreUri]", [MessageType]::Warning);
-										$serverFileContent = [ConfigurationHelper]::LoadOfflineConfigFile($policyFileName, $true, $onlineStoreUri)
-										[ConfigurationHelper]::LocalPolicyEnabled = $true
-									}
-									else {
-										throw $_
-									}
-								}
-							}
+                                                  try {
+                                                    if (Test-Path $onlineStoreUri) {
+                                                      [EventBase]::PublishGenericCustomMessage("Running Org-Policy from local policy store location: [$onlineStoreUri]",[MessageType]::Warning);
+                                                      $serverFileContent = [ConfigurationHelper]::LoadOfflineConfigFile($policyFileName,$true,$onlineStoreUri)
+                                                      [ConfigurationHelper]::LocalPolicyEnabled = $true
+                                                    } else {
+                                                      $Version = [System.Version]($global:ExecutionContext.SessionState.Module.Version);
+                                                      $serverFileContent = [ConfigurationHelper]::InvokeControlsAPI($onlineStoreUri,$Version,$policyFileName,$enableAADAuthForOnlinePolicyStore);
+                                                      [ConfigurationHelper]::ConfigVersion = $Version;
+                                                    }
+                                                  }
+                                                  catch {
+                                                    try {
+                                                      $Version = ([ConfigurationHelper]::LoadOfflineConfigFile("AzSK.json")).ConfigSchemaBaseVersion;
+                                                      $serverFileContent = [ConfigurationHelper]::InvokeControlsAPI($onlineStoreUri,$Version,$policyFileName,$enableAADAuthForOnlinePolicyStore);
+                                                      [ConfigurationHelper]::ConfigVersion = $Version;
+                                                    }
+                                                    catch {
+                                                      throw $_
+						    }
+						  }
 						}
 						elseif([ConfigurationHelper]::LocalPolicyEnabled)
 						{
