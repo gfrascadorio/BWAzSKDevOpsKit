@@ -1567,8 +1567,8 @@ class PolicySetup: AzCommandBase
 				throw ([SuppressedException]::new("Invalid schema found. Please correct schema and reupload extensions.", [SuppressedExceptionType]::Generic))
 			}
 			$this.PublishCustomMessage("Completed validating sytax exception for extension files.", [MessageType]::Update);
-                        $serverConfigMetadataPath = Join-Path $this.FolderPath $([Constants]::ServerConfigMetadataFileName)
-                        $serverConfigMetadata = Get-Content -Path $serverConfigMetadataPath | ConvertFrom-Json
+			$serverConfigMetadataPath = Join-Path $this.FolderPath $([Constants]::ServerConfigMetadataFileName) 
+			$serverConfigMetadata = Get-Content -Path $serverConfigMetadataPath | ConvertFrom-Json
 
 			# Dynamically get list of files available in folder
 			# TODO: Need to optimize the logic to calculate ServerConfigMetadataFileContent
